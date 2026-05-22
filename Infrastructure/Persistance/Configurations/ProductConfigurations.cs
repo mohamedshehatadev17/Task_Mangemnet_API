@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TaskMangement.Infrastructure.Persistance.Configurations
+{
+    //public class ProductConfigurations : IEnityTypeConfiguration<Product>
+    //{
+    //}
+}
