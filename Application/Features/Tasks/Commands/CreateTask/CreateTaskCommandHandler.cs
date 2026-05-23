@@ -9,7 +9,6 @@ using TaskMangement.Application.Abstractions.Contracts;
 using TaskMangement.Application.Abstractions.Contracts.Persistance;
 using TaskMangement.Application.DTOs;
 using TaskMangement.Application.Features.Project.Queries.GetAllProjects;
-using TaskMangement.Application.Features.Tasks.CreateTask;
 using TaskMangement.Application.Shared;
 
 namespace TaskMangement.Application.Features.Tasks.Commands.CreateTask

@@ -8,17 +8,17 @@ using TaskMangement.Application.Abstractions.Contracts;
 using TaskMangement.Domain.Models;
 using TaskMangement.Infrastructure.Persistance.Contexts;
 
-namespace TaskMangement.Infrastructure.Repos
+namespace TaskMangement.Infrastructure.Repos;
+
+public class ProjectRepository : GenericRepository<Project>,IProjectRepository
 {
-    public class ProjectRepository : GenericRepository<Project>,IProjectRepository
+    public ProjectRepository(ApplicationDbContext context) : base(context)
     {
-        public ProjectRepository(ApplicationDbContext context) : base(context)
-        {
-        }
-        public async Task<Project?> GetProjectWithTask(Guid id, CancellationToken cancellationToken = default)
-        {
-            return await _dbSet
-                .Include(p => p.Tasks)
-                .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-        }
+    }
+    public async Task<Project?> GetProjectWithTask(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(p => p.Tasks)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskMangement.Application.Features.Auth.Login;
 using TaskMangement.Application.Features.Auth.Register;
@@ -17,6 +18,7 @@ namespace TaskMangement.API.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(
             RegisterCommand command)
         {
@@ -26,6 +28,7 @@ namespace TaskMangement.API.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(
             LoginCommand command)
         {

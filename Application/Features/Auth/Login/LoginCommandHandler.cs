@@ -20,16 +20,12 @@ namespace TaskMangement.Application.Features.Auth.Commands.Login
 
         public async Task<Result<string>> Handle(LoginCommand request,CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByEmailAsync(
-                request.Email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user is null)
                 return Result<string>.Failure("Invalid credentials");
 
-            var isPasswordCorrect =
-                await _userManager.CheckPasswordAsync(
-                    user,
-                    request.Password);
+            var isPasswordCorrect =await _userManager.CheckPasswordAsync(user,request.Password);
 
             if (!isPasswordCorrect)
                 return Result<string>.Failure("Invalid credentials");
