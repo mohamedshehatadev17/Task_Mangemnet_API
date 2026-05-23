@@ -1,12 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaskMangement.Infrastructure.Persistance.Configurations
+﻿
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Task = TaskMangement.Domain.Models.Task;
+namespace TaskMangement.Infrastructure.Persistance.Configurations;
+public class TaskConfigurations : IEntityTypeConfiguration<Task>
 {
-    public class TaskConfigurations
+    public void Configure(EntityTypeBuilder<Task> builder)
     {
+        builder.HasKey(t => t.Id);
+
+        builder.Property(t => t.Title)
+               .IsRequired()
+               .HasMaxLength(200);
+
+        builder.Property(t => t.Status)
+               .IsRequired();
+
+        builder.Property(t => t.Priority)
+               .IsRequired();
+
+        builder.Property(t => t.DueDate)
+               .IsRequired();
+
+        builder.HasOne(t => t.Project)
+               .WithMany(p => p.Tasks)
+               .HasForeignKey(t => t.ProjectId)
+               .OnDelete(DeleteBehavior.Cascade);
     }
+
 }

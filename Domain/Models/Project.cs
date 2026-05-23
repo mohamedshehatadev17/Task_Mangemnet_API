@@ -10,6 +10,8 @@ namespace TaskMangement.Domain.Models
     {
             public string Name { get; set; } = string.Empty;
             public DateTime CreatedAt { get; set; }
+            public Guid UserId { get; set; }
+            public User User { get; set; } = null!;
             public ICollection<Task> Tasks { get; set; } = [];
     }
 }
