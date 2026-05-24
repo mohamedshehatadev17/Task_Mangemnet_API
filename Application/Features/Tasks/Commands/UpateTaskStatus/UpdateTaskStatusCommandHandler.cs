@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using TaskMangement.Application.Abstractions.Contracts;
-using TaskMangement.Application.Abstractions.Contracts.Persistance;
 using TaskMangement.Application.Shared;
 
 namespace TaskMangement.Application.Features.Tasks.Commands.UpateTask
@@ -20,9 +19,7 @@ namespace TaskMangement.Application.Features.Tasks.Commands.UpateTask
             _taskRepository = taskRepository;
         }
 
-        public async Task<Result<bool>> Handle(
-            UpdateTaskStatusCommand request,
-            CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(UpdateTaskStatusCommand request,CancellationToken cancellationToken)
         {
             var validationResult = await new UpdateTaskStatusCommandValidator().ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)

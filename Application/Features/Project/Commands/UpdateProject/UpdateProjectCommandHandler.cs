@@ -1,4 +1,4 @@
-﻿
+﻿using Mapster;
 using MapsterMapper;
 using MediatR;
 using TaskMangement.Application.Abstractions.Contracts;
@@ -27,7 +27,8 @@ public class UpdateProjectCommandHandler
         if (project is null)
             return Result<bool>.Failure("Project not found.");
 
-        var updatedProject = _mapper.Map(request, project);
+            // Fix CS8389 by specifying the type argument for Adapt<>
+        var updatedProject = request.Adapt(project);
         _repository.Update(updatedProject);
         var result = await _repository.SaveChangesAsync();
 
