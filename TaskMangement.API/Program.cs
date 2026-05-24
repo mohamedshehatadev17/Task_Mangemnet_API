@@ -2,6 +2,7 @@ using System;
 using System.Security.Claims;
 using System.Text;
 using Application;
+using Asp.Versioning;
 using FluentValidation;
 using Infrastructure;
 using Mapster;
@@ -96,8 +97,21 @@ namespace TaskMangement.API
                     options.MapInboundClaims = false;
                 });
 
-            // Authorization
-            builder.Services.AddAuthorization();
+            builder.Services
+                .AddApiVersioning(options =>
+                {
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+
+                    options.ReportApiVersions = true;
+
+                    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+                })
+                .AddMvc(); // 🔥 REQUIRED for controllers
+
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            builder.Services.AddOpenApi();
 
             var app = builder.Build();
 
