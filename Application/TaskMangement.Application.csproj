@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Behavoirs\" />
     <Folder Include="Exceptions\" />
   </ItemGroup>
 
