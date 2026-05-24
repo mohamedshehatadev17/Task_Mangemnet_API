@@ -30,7 +30,7 @@ namespace TaskMangement.Application.Features.Auth.Commands.Login
             if (!isPasswordCorrect)
                 return Result<string>.Failure("Invalid credentials");
 
-            return Result<string>.Success(_jwtTokenGenerator.GenerateToken(user));
+            return Result<string>.Success(await _jwtTokenGenerator.GenerateTokenAsync(user));
         }
     }
 }

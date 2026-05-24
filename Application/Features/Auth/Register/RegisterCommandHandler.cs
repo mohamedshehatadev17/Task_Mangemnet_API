@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using TaskMangement.Application.Abstractions.Authentication;
 using TaskMangement.Application.Features.Auth.Register;
+using TaskMangement.Application.Helpers;
 using TaskMangement.Application.Shared;
 using TaskMangement.Domain.Models;
 
@@ -45,8 +46,8 @@ namespace TaskMangement.Application.Features.Auth.Commands.Register
                     string.Join(",",
                     result.Errors.Select(x => x.Description)));
             }
-
-            return Result<string>.Success(_jwtTokenGenerator.GenerateToken(user));
+            await _userManager.AddToRoleAsync(user, Roles.User);
+            return Result<string>.Success(await _jwtTokenGenerator.GenerateTokenAsync(user));
         }
     }
 }

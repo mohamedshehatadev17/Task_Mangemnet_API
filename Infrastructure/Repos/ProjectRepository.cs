@@ -26,7 +26,9 @@ public class ProjectRepository : GenericRepository<Project>,IProjectRepository
     public async Task<Project?> GetProjectWithTask(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(p => p.Tasks)
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Include(p => p.Tasks.Where(t => !t.IsDeleted))
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

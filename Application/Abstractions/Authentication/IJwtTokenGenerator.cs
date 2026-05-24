@@ -9,6 +9,6 @@ namespace TaskMangement.Application.Abstractions.Authentication
 {
     public interface IJwtTokenGenerator
     {
-        string GenerateToken(User user);
+        Task<string> GenerateTokenAsync(User user);
     }
 }
