@@ -163,21 +163,6 @@ Swagger UI is accessible at:
 ```
 https://localhost:5001/swagger
 ```
-
----
-
-## 🐳 Running with Docker
-
-```bash
-# Build and start all services
-docker compose up --build
-
-# Stop services
-docker compose down
-```
-
-The `docker-compose.yml` spins up both the API and a SQL Server container with all environment variables pre-configured.
-
 ---
 
 ## ⚙️ Configuration
