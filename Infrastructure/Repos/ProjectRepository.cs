@@ -15,6 +15,14 @@ public class ProjectRepository : GenericRepository<Project>,IProjectRepository
     public ProjectRepository(ApplicationDbContext context) : base(context)
     {
     }
+
+    public async Task<IEnumerable<Project>> GetProjectsWithTasks(CancellationToken cancellationToken = default)
+    {
+        return await _context.Projects
+            .Include(p => p.Tasks)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Project?> GetProjectWithTask(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbSet

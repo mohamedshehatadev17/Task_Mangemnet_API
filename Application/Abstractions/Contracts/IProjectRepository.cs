@@ -11,5 +11,6 @@ namespace TaskMangement.Application.Abstractions.Contracts
     public interface IProjectRepository : IGenericRepository<Project>
     {
         Task<Project?> GetProjectWithTask(Guid id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Project>> GetProjectsWithTasks(CancellationToken cancellationToken = default);
     }
 }
