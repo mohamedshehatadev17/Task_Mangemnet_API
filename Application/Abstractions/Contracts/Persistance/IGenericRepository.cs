@@ -11,7 +11,7 @@ namespace TaskMangement.Application.Abstractions.Contracts.Persistance
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
         Task AddAsync(T entity, CancellationToken cancellationToken = default);
         bool Update(T entity);
-        bool IsExist(Guid id, CancellationToken cancellationToken = default);
+        bool IsExist(Guid id);
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
