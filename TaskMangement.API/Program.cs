@@ -19,7 +19,7 @@ namespace TaskMangement.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-            builder.Services.AddApplication();
+            //builder.Services.AddApplication();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 

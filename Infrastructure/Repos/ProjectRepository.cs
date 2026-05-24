@@ -10,7 +10,7 @@ using TaskMangement.Infrastructure.Persistance.Contexts;
 
 namespace TaskMangement.Infrastructure.Repos
 {
-    public class ProjectRepository : GenericRepository<Project>,IProjectRepository
+    public class ProjectRepository : GenericRepository<Project>, IProjectRepository
     {
         public ProjectRepository(ApplicationDbContext context) : base(context)
         {
@@ -21,4 +21,5 @@ namespace TaskMangement.Infrastructure.Repos
                 .Include(p => p.Tasks)
                 .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
+    }
 }

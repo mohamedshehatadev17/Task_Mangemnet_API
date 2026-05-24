@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using MediatR;
 using TaskMangement.Application.Abstractions.Contracts;
 using TaskMangement.Application.Abstractions.Contracts.Persistance;
-using TaskMangement.Application.Features.Tasks.UpateTask;
 using TaskMangement.Application.Shared;
 
 namespace TaskMangement.Application.Features.Tasks.Commands.UpateTask

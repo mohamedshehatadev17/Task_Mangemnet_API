@@ -11,5 +11,7 @@ namespace TaskMangement.Application.Features.Project.Queries.GetAllProjects
 {
     public class GetAllProjectsQuery : IRequest<Result<IEnumerable<ProjectResponse>>>
     {
+        public int page { get; set; } = 1;
+        public int pageSize { get; set; } = 10;
     }
 }
