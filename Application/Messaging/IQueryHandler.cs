@@ -1,4 +1,5 @@
-﻿using SharedKernel;
+﻿
+using TaskMangement.Application.Shared;
 
 namespace Application.Abstractions.Messaging;
 

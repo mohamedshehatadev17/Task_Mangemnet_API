@@ -1,3 +1,6 @@
+using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using TaskMangement.Infrastructure.Persistance.Contexts;
 
@@ -12,8 +15,11 @@ namespace TaskMangement.API
             // Add services to the container.
 
             builder.Services.AddControllers();
-            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+            //builder.Services.AddApplication();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 

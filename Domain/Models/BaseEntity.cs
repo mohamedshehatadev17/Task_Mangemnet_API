@@ -8,7 +8,8 @@ namespace TaskMangement.Domain.Models
 {
     public class BaseEntity
     {
-        public Guid Id { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Description { get; set; } = string.Empty;       
+        public bool IsDeleted { get; set; } =false;
     }
 }

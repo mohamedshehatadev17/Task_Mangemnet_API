@@ -7,7 +7,7 @@ namespace TaskMangement.Domain.Models;
 public class Task : BaseEntity
 {
     public string Title { get; set; } = string.Empty;
-    public TaskStatus Status { get; set; }
+    public TaskStatus Status { get; set; } = TaskStatus.NotStarted;
     public DateTime DueDate { get; set; }
     public TaskPriority Priority { get; set; }
     [ForeignKey("Project")]

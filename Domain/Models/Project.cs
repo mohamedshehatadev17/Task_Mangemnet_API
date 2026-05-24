@@ -9,7 +9,9 @@ namespace TaskMangement.Domain.Models
     public class Project : BaseEntity
     {
             public string Name { get; set; } = string.Empty;
-            public DateTime CreatedAt { get; set; }
+            public DateTime CreatedAt { get; set; }= DateTime.UtcNow;
+            public Guid UserId { get; set; }
+            public User User { get; set; } = null!;
             public ICollection<Task> Tasks { get; set; } = [];
     }
 }
