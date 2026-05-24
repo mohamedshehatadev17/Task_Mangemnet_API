@@ -12,6 +12,5 @@ namespace TaskMangement.Application.Features.Project.Commands.CreateProject
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public Guid UserId { get; set; }
     }
 }

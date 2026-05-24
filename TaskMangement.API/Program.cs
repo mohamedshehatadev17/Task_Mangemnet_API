@@ -27,6 +27,8 @@ namespace TaskMangement.API
             builder.Services.AddControllers();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddIdentity<User, IdentityRole<Guid>>()
@@ -52,22 +54,17 @@ namespace TaskMangement.API
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
 
-                        ValidIssuer =
-                            builder.Configuration["Jwt:Issuer"],
-
-                        ValidAudience =
-                            builder.Configuration["Jwt:Audience"],
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
 
                         IssuerSigningKey =
                             new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(
+                                Convert.FromBase64String(
                                     builder.Configuration["Jwt:Key"]!))
                     };
+                options.MapInboundClaims = false;
             });
 
-            builder.Services.AddAuthorization();
-            builder.Services.AddApplication();
-            builder.Services.AddInfrastructure();
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();

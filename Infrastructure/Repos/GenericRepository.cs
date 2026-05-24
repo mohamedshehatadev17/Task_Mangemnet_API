@@ -17,9 +17,12 @@ namespace TaskMangement.Infrastructure.Repos
             _dbSet = context.Set<T>();
         }
 
-        public async Task<T?> GetByIdAsync(Guid id, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        public async Task<T?> GetByIdAsync(Guid id,Expression<Func<T, bool>>? predicate = null,CancellationToken cancellationToken = default)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
+            if (predicate != null)
+                return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
+
+            return await _dbSet.FindAsync([id], cancellationToken);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskMangement.Application.Features.Project.Commands.CreateProject;
@@ -9,12 +10,13 @@ using TaskMangement.Application.Features.Project.Queries.GetProjectById;
 
 namespace TaskMangement.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
         private readonly IMediator _mediator;
-
+        
         public ProjectsController(IMediator mediator)
         {
             _mediator = mediator;
@@ -23,8 +25,7 @@ namespace TaskMangement.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(
-                new GetAllProjectsQuery { page = page, pageSize = pageSize });
+            var result = await _mediator.Send(new GetAllProjectsQuery { page = page, pageSize = pageSize });
 
             return Ok(result);
         }
@@ -37,8 +38,7 @@ namespace TaskMangement.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(
-            CreateProjectCommand command)
+        public async Task<IActionResult> Create(CreateProjectCommand command)
         {
             var result = await _mediator.Send(command);
 

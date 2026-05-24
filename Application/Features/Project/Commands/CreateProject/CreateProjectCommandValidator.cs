@@ -16,9 +16,6 @@ namespace TaskMangement.Application.Features.Project.Commands.CreateProject
                 .MaximumLength(100).WithMessage("Project name must not exceed 100 characters.");
             RuleFor(x => x.Description)
                 .MaximumLength(500).WithMessage("Project description must not exceed 500 characters.");
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("User ID is required.");
-
         }
     }
 }
