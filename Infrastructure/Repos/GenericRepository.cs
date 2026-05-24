@@ -58,10 +58,9 @@ namespace TaskMangement.Infrastructure.Repos
             return true;
         }
 
-        public bool IsExist(Guid id,CancellationToken cancellationToken = default)
+        public bool IsExist(Guid id)
         {
-            var entity = _dbSet.Find(id,cancellationToken);
-
+            var entity = _dbSet.Find(id); // no CancellationToken here
             return entity != null;
         }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using TaskMangement.Application.Abstractions.Contracts;
 using TaskMangement.Application.Shared;
+using TaskStatus = TaskMangement.Domain.Enums.TaskStatus;
 
 namespace TaskMangement.Application.Features.Tasks.Commands.UpateTask
 {
@@ -13,8 +14,7 @@ namespace TaskMangement.Application.Features.Tasks.Commands.UpateTask
           : IRequestHandler<UpdateTaskStatusCommand, Result<bool>>
     {
         private readonly ITaskRepository _taskRepository;
-        public UpdateTaskStatusCommandHandler(
-            ITaskRepository taskRepository)
+        public UpdateTaskStatusCommandHandler(ITaskRepository taskRepository)
         {
             _taskRepository = taskRepository;
         }

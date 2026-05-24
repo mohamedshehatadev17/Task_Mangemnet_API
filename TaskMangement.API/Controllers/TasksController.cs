@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskMangement.Application.Features.Tasks.Commands.CreateTask;
 using TaskMangement.Application.Features.Tasks.Commands.DeleteTask;
@@ -7,6 +8,7 @@ using TaskMangement.Application.Features.Tasks.Queries.GetTaskByProject;
 
 namespace TaskMangement.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
@@ -19,20 +21,16 @@ namespace TaskMangement.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(
-            CreateTaskCommand command)
+        public async Task<IActionResult> Create(CreateTaskCommand command)
         {
             var result = await _mediator.Send(command);
-
             return Ok(result);
         }
 
         [HttpPut("status")]
-        public async Task<IActionResult> UpdateStatus(
-            UpdateTaskStatusCommand command)
+        public async Task<IActionResult> UpdateStatus(UpdateTaskStatusCommand command)
         {
             var result = await _mediator.Send(command);
-
             return Ok(result);
         }
 
