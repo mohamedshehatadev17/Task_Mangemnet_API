@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using System.Text;
 using Application;
 using FluentValidation;
@@ -9,80 +10,118 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using TaskMangement.API.Middlewares;
 using TaskMangement.Application.Abstractions.Authentication;
 using TaskMangement.Domain.Models;
 using TaskMangement.Infrastructure.Authentication;
+using TaskMangement.Infrastructure.Persistance.Authentication.Seed;
 using TaskMangement.Infrastructure.Persistance.Contexts;
 
 namespace TaskMangement.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async System.Threading.Tasks.Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
+            // Add Controllers
             builder.Services.AddControllers();
+
+            // Open API
+            builder.Services.AddOpenApi();
+
+            // FluentValidation
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+            // Clean Architecture Layers
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure();
+
+            // Database
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-                    .AddEntityFrameworkStores<ApplicationDbContext>()
-                    .AddDefaultTokenProviders();
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<IJwtTokenGenerator,JwtTokenGenerator>();
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme =
-                    JwtBearerDefaults.AuthenticationScheme;
+            // Identity + Roles
+            builder.Services
+                .AddIdentity<User, IdentityRole<Guid>>(options =>
+                {
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
-                options.DefaultChallengeScheme =
-                    JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters =
-                    new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
+            // JWT Generator
+            builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
+            // Authentication
+            builder.Services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme =
+                        JwtBearerDefaults.AuthenticationScheme;
 
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(
-                                Convert.FromBase64String(
-                                    builder.Configuration["Jwt:Key"]!))
-                    };
-                options.MapInboundClaims = false;
-            });
+                    options.DefaultChallengeScheme =
+                        JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters =
+                        new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
 
+                            ValidIssuer =
+                                builder.Configuration["Jwt:Issuer"],
 
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+                            ValidAudience =
+                                builder.Configuration["Jwt:Audience"],
+
+                            IssuerSigningKey =
+                                new SymmetricSecurityKey(
+                                    Convert.FromBase64String(
+                                        builder.Configuration["Jwt:Key"]!)),
+
+                            RoleClaimType = ClaimTypes.Role
+                        };
+
+                    options.MapInboundClaims = false;
+                });
+
+            // Authorization
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Seed Roles
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+                await RoleSeeder.SeedAsync(roleManager);
+            }
+
+            // Swagger/OpenAPI
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
             }
 
+            // Middlewares
             app.UseHttpsRedirection();
-
+            app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseAuthentication();
-
             app.UseAuthorization();
 
+            // Controllers
             app.MapControllers();
 
             app.Run();

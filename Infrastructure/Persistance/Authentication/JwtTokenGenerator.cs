@@ -1,24 +1,26 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TaskMangement.Application.Abstractions.Authentication;
 using TaskMangement.Domain.Models;
-using System.Security.Cryptography;
 
 namespace TaskMangement.Infrastructure.Authentication
 {
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
         private readonly IConfiguration _configuration;
-
-        public JwtTokenGenerator(IConfiguration configuration)
+        private readonly UserManager<User> _userManager;
+        public JwtTokenGenerator(IConfiguration configuration, UserManager<User> userManager)
         {
             _configuration = configuration;
+            _userManager = userManager;
         }
 
-        public string GenerateToken(User user)
+        public async Task<string> GenerateTokenAsync(User user)
         {
             var keyString = _configuration["Jwt:Key"]
                 ?? throw new InvalidOperationException("JWT Key is missing");
@@ -32,20 +34,41 @@ namespace TaskMangement.Infrastructure.Authentication
             var duration = Convert.ToDouble(
                 _configuration["Jwt:DurationInMinutes"] ?? "60");
 
+            // Get User Roles
+            var roles = await _userManager.GetRolesAsync(user);
+
             var claims = new List<Claim>
     {
         new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-        new(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-        new(ClaimTypes.Name, user.UserName ?? ""),
-        new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
+        new(JwtRegisteredClaimNames.Email,
+            user.Email ?? ""),
+
+        new(ClaimTypes.Name,
+            user.UserName ?? ""),
+
+        new(JwtRegisteredClaimNames.Jti,
+            Guid.NewGuid().ToString()),
+
         new(JwtRegisteredClaimNames.Iat,
-            DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+            DateTimeOffset.UtcNow
+                .ToUnixTimeSeconds()
+                .ToString(),
             ClaimValueTypes.Integer64)
     };
 
+            // Add Roles To Claims
+            claims.AddRange(
+                roles.Select(role =>
+                    new Claim(ClaimTypes.Role, role)));
+
             var keyBytes = Convert.FromBase64String(keyString);
+
             var key = new SymmetricSecurityKey(keyBytes);
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: issuer,
@@ -55,7 +78,8 @@ namespace TaskMangement.Infrastructure.Authentication
                 signingCredentials: credentials
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler()
+                .WriteToken(token);
         }
     }
 }
